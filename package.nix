@@ -638,8 +638,8 @@ let
       (builtins.readFile ./update-check.sh);
   };
 in
-assert flatcGuard;
-assert pubspecGuard;
+assert flatcGuard == null;
+assert pubspecGuard == null;
 {
   default = officialRelease;
   withUiDevelopment = officialReleaseWithUiDevelopment;
@@ -647,5 +647,5 @@ assert pubspecGuard;
   inherit officialRelease officialReleaseWithUiDevelopment;
   inherit sourceProfile sourceProfileWithUiDevelopment update-check settingsApp;
   # Convenience: everything in one attrset, in case a host wants the pieces.
-  inherit dartShell compositor uiDevRoot denialUiWrapper denialCtlWrapper versions;
+  inherit dartShell compositor uiDevRoot denialUiWrapper denialCtlWrapper;
 }
