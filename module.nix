@@ -65,6 +65,29 @@ let
     cfg.outputs
     (lib.optionalString (cfg.extraOutputsConf != "") cfg.extraOutputsConf)
   ]);
+  # Desktop entry text shared by both the /etc and XDG_DATA_DIRS installs.
+  desktopEntry = ''
+    [Desktop Entry]
+    Name=Denial
+    Comment=Flutter-native Wayland compositor and desktop shell
+    Exec=${pkg}/bin/denial-session${lib.optionalString cfg.startLocked " --start-locked"}
+    TryExec=${pkg}/bin/denial-session
+    Type=Application
+    DesktopNames=Denial
+    Keywords=wayland;compositor;flutter;rust;
+  '';
+  # Session package that registers Denial in NixOS's sessionData.desktops.
+  # display managers that follow the NixOS session infrastructure (ly, SDDM,
+  # greetd, etc.) scan ${sessionData.desktops}/share/wayland-sessions for
+  # session .desktop files; plain environment.etc is invisible to them.
+  denialSession = pkgs.runCommand "denial-wayland-session"
+    { passthru.providedSessions = [ "denial" ]; }
+    ''
+      mkdir -p $out/share/wayland-sessions
+      cat > $out/share/wayland-sessions/denial.desktop << 'NIXEOF'
+      ${desktopEntry}
+      NIXEOF
+    '';
 in
 {
   options.services.denial = {
@@ -270,6 +293,12 @@ in
         pkgs.xdg-desktop-portal-wlr
       ];
 
+    # Register Denial in sessionData.desktops so the display manager can list
+    # it.  ly's NixOS module sets waylandsessions to
+    # ${sessionData.desktops}/share/wayland-sessions; GDM and SDDM also
+    # consult this path via the NixOS session infrastructure.
+    services.displayManager.sessionPackages = [ denialSession ];
+
     # Denial runs a raw-embedder compositor on DRM/KMS: the session user needs
     # access to the GPU + input nodes. Groups are defined explicitly so the
     # configuration does not depend on another module having created them.
@@ -336,16 +365,9 @@ in
       ''}
     '');
 
-    environment.etc."wayland-sessions/denial.desktop".text = ''
-      [Desktop Entry]
-      Name=Denial
-      Comment=Flutter-native Wayland compositor and desktop shell
-      Exec=${pkg}/bin/denial-session${lib.optionalString cfg.startLocked " --start-locked"}
-      TryExec=${pkg}/bin/denial-session
-      Type=Application
-      DesktopNames=Denial
-      Keywords=wayland;compositor;flutter;rust;
-    '';
+    # Also place the file in /etc for display managers that scan it directly
+    # (GDM, SDDM, LightDM) independent of the sessionPackages mechanism.
+    environment.etc."wayland-sessions/denial.desktop".text = desktopEntry;
 
     # `/etc/systemd/user` is itself generated as one directory entry by the
     # NixOS systemd module. Define these targets through systemd.user instead
