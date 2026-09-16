@@ -1,8 +1,9 @@
 # Denial 的 Nix flake 打包
 
-本仓库同时是 [Denial](https://github.com/denialwm/denial)(Flutter 原生 Wayland
-合成器)的 nix flake。flake 直接放在 Denial 源码树内,合成器、dart shell 和
-打包元数据都来自 `self`,不需要重复维护任何源码引用。
+本仓库是 [Denial](https://github.com/denialwm/denial)(Flutter 原生 Wayland
+合成器)的**独立打包 flake**。flake 不再嵌在 Denial 源码树内；本仓库只保留
+打包相关文件（nix 文件、update-check.sh、LICENSE、文档），所有源码引用都
+通过 `denial-src` input 指向上游 `github:denialwm/denial`。
 
 打包方案以 **0.4.1** 为准,改编自
 [BeyondtheApex/nixos-denial-compositor-flake-config](https://github.com/BeyondtheApex/nixos-denial-compositor-flake-config)
@@ -17,9 +18,9 @@
 | --- | --- |
 | `.#` / `.#officialRelease` | Denial **官方预编译 release**(合成器 + shell AOT bundle + Settings + 引擎),解包并修补到 nix store,无需编译 |
 | `.#withUiDevelopment` | 官方 release 加上 `denialctl`/`denial-ui`/`denial-session` 包装脚本,支持 Flutter UI 实时热更新开发 |
-| `.#sourceProfile` | **从本源码树编译 Rust 合成器**,并用预编译 fork 工具链编译 dart shell 的 profile AOT bundle |
+| `.#sourceProfile` | **从上游源码树编译 Rust 合成器**,并用预编译 fork 工具链编译 dart shell 的 profile AOT bundle |
 | `.#sourceProfileWithUiDevelopment` | 源码构建版 + UI 开发工具包装脚本 |
-| `.#settingsApp` | 用 `settings_app/` 构建的独立 GTK 设置应用 |
+| `.#settingsApp` | 用上游 `settings_app/` 构建的独立 GTK 设置应用 |
 | `.#compositor` / `.#dartShell` / `.#uiDevRoot` | 各个中间产物 |
 | `.#update-check` | 新版本发布时,打印 `versions.nix` 里所有需要更新的字段和最新哈希 |
 
@@ -53,7 +54,7 @@ nix build .#sourceProfile # 从源码编译(Rust + dart AOT)
     enable = true;
     user = "youruser";        # 已存在的用户;会加入 video/input/render/seat 组
     # useOfficialRelease = true;   # 默认:官方预编译产物
-    # useOfficialRelease = false;  # 从源码编译 Rust 合成器
+    # useOfficialRelease = false;  # 从上游源码编译 Rust 合成器
     # shellProfile = "desktop";    # 或 "mobile"
     # renderer = "impeller";       # 或 "skia"
     # startLocked = true;          # 原生 PAM 锁屏(自动登录场景)
@@ -77,14 +78,20 @@ nix run .#update-check
 
 它会对比 `versions.nix` 与 denialwm/denial 最新 release,打印所有需要修改的
 字段和刚算好的哈希(release 三件套、ui-development 工具链、flutter
-tool_backend 文件)。同时记得更新源码树本身(flake 就在 Denial 仓库里);
-如果 `compositor/Cargo.lock` 的 git 依赖变了,或 `protocol/FLATBUFFERS_VERSION`
-升了,还要更新 `cargoOutputHashes` / `flatc` 字段——否则 `package.nix` 里的
-求值期守卫会直接报错拦截。
+tool_backend 文件)。
+
+升级时还需要：
+
+1. `nix flake update denial-src` —— 更新上游源码 input 的 pin。
+2. 如果上游 `compositor/Cargo.lock` 的 git 依赖变了,或
+   `protocol/FLATBUFFERS_VERSION` 升了,更新 `versions.nix` 的
+   `cargoOutputHashes` / `flatc` 字段——否则 `package.nix` 里的求值期守卫会
+   直接报错拦截。
 
 ## 文件说明
 
-- `flake.nix` — 输入(nixpkgs + rust-overlay)、`packages`、`nixosModules`
+- `flake.nix` — 输入(nixpkgs + denial-src + rust-overlay)、`packages`、
+  `nixosModules`
 - `versions.nix` — release 固定版本与哈希(升级时唯一要改的文件)
 - `package.nix` — 打包实现,带求值期守卫(Flutter 版本对
   `dart_shell/pubspec.yaml`、flatc 对 `protocol/FLATBUFFERS_VERSION`)

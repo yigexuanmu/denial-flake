@@ -20,7 +20,7 @@
   config,
   lib,
   pkgs,
-  # Injected by flake.nix.
+# Injected by flake.nix: upstream denialwm/denial source tree.
   flake,
   rust-overlay,
   ...
@@ -101,8 +101,8 @@ in
         the upstream compositor, shell AOT bundle, Settings app, and release
         Flutter engine without Nix compiling Denial code. When disabled, the
         module uses the source/profile package path, which builds the Rust
-        compositor and compiles the Dart shell profile AOT bundle from this
-        flake using the prebuilt UI development toolchain.
+        compositor and compiles the Dart shell profile AOT bundle from the
+        upstream source using the prebuilt UI development toolchain.
       '';
     };
 
@@ -115,6 +115,7 @@ in
         officialRelease/officialReleaseWithUiDevelopment or
         sourceProfile/sourceProfileWithUiDevelopment according to
         services.denial.useOfficialRelease and services.denial.uiDevelopment.enable.
+        Source code is fetched from the upstream denialwm/denial repository.
       '';
     };
 

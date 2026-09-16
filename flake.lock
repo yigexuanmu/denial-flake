@@ -1,5 +1,21 @@
 {
   "nodes": {
+    "denial-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1789504276,
+        "narHash": "sha256-1Y2uXcGwKsFt/+oxhV53sEUtXJxnO/HShUBBYOE1MrM=",
+        "owner": "denialwm",
+        "repo": "denial",
+        "rev": "29cfdb92a608016e769a266d0e685b7030135826",
+        "type": "github"
+      },
+      "original": {
+        "owner": "denialwm",
+        "repo": "denial",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1789286504,
@@ -34,6 +50,7 @@
     },
     "root": {
       "inputs": {
+        "denial-src": "denial-src",
         "nixpkgs": "nixpkgs",
         "rust-overlay": "rust-overlay"
       }

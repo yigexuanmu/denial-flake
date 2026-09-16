@@ -6,8 +6,9 @@
 # The "@...@" placeholders are replaced at build time from versions.nix (see
 # package.nix). Run with --json for machine output.
 #
-# Also update the flake's own source: this flake lives in the denialwm/denial
-# tree, so a new release means `git pull` / merging the new tag here too.
+# To update the flake's source pin after a new release, change the
+# `denial-src` input in flake.nix (or its revision in flake.lock).
+# `nix flake update denial-src` also refreshes it.
 set -euo pipefail
 
 JSON="${DENIAL_UPDATE_CHECK_JSON:-0}"
@@ -213,8 +214,9 @@ echo "  flutter fork revision: $FLUTTER_FRAMEWORK_REVISION -> ${NEW_FLUTTER_FRAM
 echo "  flutterToolBackend.shell: $FLUTTER_TOOL_BACKEND_SHELL_SHA256 -> ${NEW_FLUTTER_TOOL_BACKEND_SHELL_SHA256:-?}"
 echo "  flutterToolBackend.dart : $FLUTTER_TOOL_BACKEND_DART_SHA256 -> ${NEW_FLUTTER_TOOL_BACKEND_DART_SHA256:-?}"
 echo
-echo "Also update the source tree itself (this flake lives inside the Denial"
-echo "repository): git pull / merge the new tag, and update"
+echo "Update the denial-src flake input to the new upstream rev:"
+echo "  nix flake update denial-src"
+echo "Then update"
 echo "  versions.nix cargoOutputHashes   if compositor/Cargo.lock changed git pins"
 echo "  versions.nix flatc               if protocol/FLATBUFFERS_VERSION changed"
 echo

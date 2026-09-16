@@ -1,10 +1,10 @@
-# Denial package set, built from this repository (the denialwm/denial source).
+# Denial package set. Source code comes from the upstream denialwm/denial repository
 #
 # Two packaging paths:
 #   - officialRelease (default): unpacks Denial's official prebuilt release
 #     artifacts (compositor + shell AOT bundle + Settings + engine). No Nix
 #     compilation of Denial code.
-#   - sourceProfile: builds the Rust compositor from this tree and compiles
+#   - sourceProfile: builds the Rust compositor from the upstream source and compiles
 #     the Dart shell profile AOT bundle using Denial's prebuilt fork Flutter
 #     toolchain (denial-ui-development). The Flutter engine itself is never
 #     compiled — the fork toolchain and engine come as prebuilt binaries.
@@ -14,7 +14,7 @@
 # github:YeFaDa/denial.nix.
 {
   pkgs,
-  # The denialwm/denial source tree this flake lives in (self).
+  # The upstream denialwm/denial source tree (from the denial-src flake input).
   denial,
   # oxalica/rust-overlay flake input, for the rustc pinned in
   # rust-toolchain.toml.

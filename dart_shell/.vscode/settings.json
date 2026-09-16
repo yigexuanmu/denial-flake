@@ -1,9 +1,0 @@
-{
-  "dart.sdkPath": "/usr/lib/denial/ui-development/flutter/bin/cache/dart-sdk",
-  "dart.flutterSdkPath": "/usr/lib/denial/ui-development/flutter",
-  "dart.flutterHotReloadOnSave": "allIfDirty",
-  "dart.devToolsLocation": {
-    "default": "external",
-    "inspector": "external"
-  }
-}

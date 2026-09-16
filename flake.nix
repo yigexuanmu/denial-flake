@@ -1,8 +1,9 @@
 # Denial — a Flutter-native Wayland compositor — nix flake packaging.
 #
-# This flake lives inside the denialwm/denial source tree, so it takes no
-# source input: the compositor, dart shell, and packaging metadata all come
-# from `self`. Only the toolchain inputs are external.
+# This is a standalone packaging flake. All source code (compositor, dart
+# shell, packaging metadata) comes from the upstream denialwm/denial
+# repository via the `denial-src` input. Only the toolchain and packaging
+# files live in this repository.
 #
 # Quick start:
 #
@@ -17,12 +18,23 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
+    # Upstream Denial source tree — the compositor, dart shell, packaging
+    # metadata, and all build-time file reads (manifest.json, pubspec.yaml,
+    # rust-toolchain.toml, Cargo.lock, etc.) come from here.
+    #
+    # The upstream repo does not ship a flake.nix, so we fetch it as a plain
+    # source tree (flake=false).  The resulting store path is identical in
+    # layout to a regular git checkout, and ${denial-src} resolves to the
+    # repository root — exactly what package.nix's `denial` parameter needs.
+    denial-src.url = "github:denialwm/denial";
+    denial-src.flake = false;
+
     # Pinned Rust toolchain for the compositor (matches rust-toolchain.toml).
     rust-overlay.url = "github:oxalica/rust-overlay";
   };
 
   outputs =
-    { self, nixpkgs, rust-overlay }:
+    { self, nixpkgs, denial-src, rust-overlay }:
     let
       # Upstream publishes x86_64 prebuilt artifacts only, and the dart shell
       # is compiled with the prebuilt fork toolchain, so packaging is
@@ -35,13 +47,13 @@
         system:
         import ./package.nix {
           pkgs = import nixpkgs { inherit system; };
-          denial = self;
+          denial = denial-src;
           inherit rust-overlay;
         }
       );
 
       nixosModules.denial = args@{ config, lib, pkgs, ... }:
-        import ./module.nix (args // { flake = self; inherit rust-overlay; });
+        import ./module.nix (args // { flake = denial-src; inherit rust-overlay; });
       nixosModules.default = self.nixosModules.denial;
 
       formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixpkgs-fmt);

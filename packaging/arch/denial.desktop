@@ -1,8 +1,0 @@
-[Desktop Entry]
-Name=Denial
-Comment=Flutter-native Wayland compositor and desktop shell
-Exec=/usr/bin/denial-session
-TryExec=/usr/bin/denial-session
-Type=Application
-DesktopNames=Denial
-Keywords=wayland;compositor;flutter;rust;

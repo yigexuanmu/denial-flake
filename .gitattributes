@@ -1,4 +1,0 @@
-*.denw binary
-dart_shell/assets/fonts/OFL.txt -whitespace
-protocol/generated/** -whitespace
-prebuilt/flutter-engine/**/LICENSE.third_party -whitespace
