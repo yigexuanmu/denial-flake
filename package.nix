@@ -186,7 +186,16 @@ let
       };
       outputHashes = versions.cargoOutputHashes;
     };
-    buildFeatures = [ "flutter" ];
+    # Upstream (tools/denial-pc) builds the root package with --features
+    # flutter plus the separate denial-portal crate. Every bin target has
+    # required-features, so without the feature no binaries are produced.
+    # With two -p selections the feature must be package-qualified, which is
+    # why this uses cargoBuildFlags instead of buildFeatures.
+    cargoBuildFlags = [
+      "-p" "denial"
+      "-p" "denial-portal"
+      "--features" "denial/flutter"
+    ];
     nativeBuildInputs = [ pkgs.pkg-config flatc ];
     buildInputs = with pkgs; [
       libdrm
