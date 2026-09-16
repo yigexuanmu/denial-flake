@@ -16,15 +16,15 @@
   # builds entirely: the Denial shell bundle, Settings app, compositor, and
   # release Flutter engine all come from upstream artifacts.
   release = {
-    version = "0.4.1";
+    version = "0.4.2";
     denial = {
-      url = "https://github.com/denialwm/denial/releases/download/v0.4.1/denial-0.4.1-1-x86_64.pkg.tar.zst";
-      sha256 = "sha256-45H/UAynO4edmOrK+vgFeepDawk/Av1EixneB7ezVtY=";
+      url = "https://github.com/denialwm/denial/releases/download/v0.4.2/denial-0.4.2-1-x86_64.pkg.tar.zst";
+      sha256 = "sha256-/3D5iEisYnf9xlQo0op1UX0CJjyTEmOGTQ4gC3hFcs0=";
     };
     engine = {
-      version = "1.0.4.1";
-      url = "https://github.com/denialwm/denial/releases/download/v0.4.1/denial-flutter-engine-1.0.4.1-1-x86_64.pkg.tar.zst";
-      sha256 = "sha256-t7BWdRVQeObDTE2+P4++QN8OA7w0e61ExP+gnnQsywk=";
+      version = "1.0.4.2";
+      url = "https://github.com/denialwm/denial/releases/download/v0.4.2/denial-flutter-engine-1.0.4.2-1-x86_64.pkg.tar.zst";
+      sha256 = "sha256-igouZPHzfdUCbPXK/qOq4V8j/69VcFbFWB6S+acNMnA=";
     };
   };
 
@@ -32,9 +32,9 @@
   # used to compile the Dart shell AOT bundle and as the live UI development
   # toolchain.
   uiDev = {
-    version = "0.4.1";
-    url = "https://github.com/denialwm/denial/releases/download/v0.4.1/denial-ui-development-0.4.1-1-x86_64.pkg.tar.zst";
-    sha256 = "sha256-akBOwUjidU5O2+IfG9rMW40SWDYpfiCeu1EoU15yBXw=";
+    version = "0.4.2";
+    url = "https://github.com/denialwm/denial/releases/download/v0.4.2/denial-ui-development-0.4.2-1-x86_64.pkg.tar.zst";
+    sha256 = "sha256-TJx/i7opMQSqtmgymmcgxHgFaW1ax5ME9weBPIL2E6k=";
   };
 
   # The UI development archive intentionally omits flutter_tools/bin. The GTK
